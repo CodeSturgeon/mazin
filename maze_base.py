@@ -1,6 +1,38 @@
 import unittest
 import random
-# bump
+from collections import MutableSequence
+
+
+class _CellList(MutableSequence):
+	
+	def __init__(self, *args):
+		self._list = list()
+		self.extend(list(args))
+		
+	def _check(self, value):
+		if not isinstance(value, Cell):
+			raise TypeError('Not a Cell: %s' % value)
+		
+	def __len__(self):
+		return len(self._list)
+		
+	def __getitem__(self, i):
+		return self._list[i]
+		
+	def __delitem__(self, i):
+		del self._list[i]
+
+	def __setitem__(self, i, v):
+		self._check(v)
+		self._list[i] = v
+
+	def insert(self, i, v):
+		self._check(v)
+		self._list.insert(i, v)
+		
+	def __str__(self):
+		return str(self._list)
+		
 
 class Cell (object):
 	def __init__(self, grid, col, row):
@@ -203,7 +235,17 @@ class GridTest(unittest.TestCase):
 		self.assertIsInstance(cell2, Cell)
 		self.assertIsInstance(cell3, Cell)
 		# FIXME - this fails
-		#self.assertIsNot(cell1, cell2)
+		#self.assertIsNot(cell1, cell2
+
+class CellTest(unittest.TestCase):
+	
+	def test_cell_list(self):
+		cl = _CellList()
+		cl.append(Cell(None, 1, 1))
+		cl.extend([Cell(None, 2, 3)])
+		with self.assertRaises(TypeError):
+			cl.append(3)
+			cl.extend([1, 2, 3])
 
 
 if __name__ == '__main__':
