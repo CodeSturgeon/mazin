@@ -4,19 +4,19 @@ reload(maze_base)
 
 
 def btree(grid, iter):
-	for row in grid.iter_rows:
-		for cell in row:
-			if iter:
-				yield cell
-			neighbors = []
-			if cell.north:
-				neighbors.append(cell.north)
-			if cell.east:
-				neighbors.append(cell.east)
+	for cell in grid.iter_rowcells:
+		if iter:
+			yield cell
+		neighbors = []
+		if cell.north:
+			neighbors += [cell.north]
+		if cell.east:
+			neighbors += [cell.east]
 
-			if not neighbors:
-				continue
-			cell.link(random.choice(neighbors))
+		if not neighbors:
+			continue
+
+		cell.links += [random.choice(neighbors)]
 
 
 def sidewinder(grid, iter=False):
@@ -33,10 +33,10 @@ def sidewinder(grid, iter=False):
 			if closing:
 				member = random.choice(run)
 				if member.north:
-					member.link(member.north)
+					member.links += [member.north]
 					run = []
 			else:
-				cell.link(cell.east)
+				cell.links += [cell.east]
 
 
 if __name__ == '__main__':
@@ -52,14 +52,15 @@ if __name__ == '__main__':
 	except StopIteration:
 		pass
 
+	print btree_grid, '\n'
+
+
 	sidewinder_grid = maze_base.Grid(5, 5)
 	try:
 		sidewinder(sidewinder_grid, False).next()
 	except StopIteration:
 		pass
 
-	print btree_grid
-	print
 	print sidewinder_grid
 
 # vim:ts=4:noexpandtab

@@ -5,7 +5,8 @@ from collections import MutableSequence
 
 class _CellList(MutableSequence):
 	
-	def __init__(self, *args):
+	def __init__(self, cell, *args):
+		self.cell = cell
 		self._list = list()
 		self.extend(list(args))
 		
@@ -26,8 +27,10 @@ class _CellList(MutableSequence):
 		self._check(v)
 		self._list[i] = v
 
-	def insert(self, i, v):
+	def insert(self, i, v, bidirection=True):
 		self._check(v)
+		if bidirection:
+			v.links.insert(0, self.cell, bidirection=False)
 		self._list.insert(i, v)
 		
 	def __str__(self):
@@ -44,24 +47,7 @@ class Cell (object):
 		self.east = None
 		self.west = None
 		self.content = '   '
-		self._links = {}
-
-	def link(self, cell, bidi=True):
-		self._links[cell] = True
-		if bidi:
-			cell.link(self, False)
-
-	def unlink(self, cell, bidi=True):
-		del self._links[cell]
-		if bidi:
-			cell.unlink(self, False)
-
-	@property
-	def links(self):	
-		return self._links.keys()
-
-	def linked(self, cell):
-		return cell in self._links
+		self.links = _CellList(self)
 
 	def __repr__(self):
 		return 'Cell(%d, %d)' % (self.col, self.row)
@@ -103,7 +89,13 @@ class Grid(object):
 	def iter_rows(self):
 		for rn in range(self.rows):
 			yield [self._cells[(cn, rn)] for cn in range(self.cols)]
-	
+
+	@property
+	def iter_rowcells(self):
+		for rn in range(self.rows):
+			for cn in range(self.cols):
+				yield self._cells[(cn, rn)]
+
 	@property
 	def iter_cells(self):
 		return self._cells.itervalues()
@@ -121,12 +113,12 @@ class Grid(object):
 			#lines.append('|   ' + '   '.join(walls) + '   |')
 			line = '|'  # Starting wall
 			for cell in row:
-				line += cell.content + (' ' if cell.linked(cell.east) else '|')
+				line += cell.content + (' ' if cell.east in cell.links else '|')
 			lines.append(line)
 			if row == self.rows - 1:
 				lines.append(sep)
 				break
-			floors = [' '*3 if cell.linked(cell.south) else '-'*3
+			floors = [' '*3 if cell.south in cell.links else '-'*3
 					for cell in row]
 			lines.append('+' + '+'.join(floors) + '+')
 
