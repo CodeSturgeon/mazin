@@ -2,9 +2,15 @@ import unittest
 import random
 from collections import MutableSequence
 
+N = NORTH = 0x1
+E = EAST = 0x2
+S = SOUTH = 0x4
+W = WEST = 0x8
+
+DIRECTIONS = (NORTH, EAST, SOUTH, WEST)
+
 
 class _CellList(MutableSequence):
-
 	def __init__(self, cell, *args):
 		self.cell = cell
 		self._list = list()
@@ -51,6 +57,15 @@ class Cell (object):
 
 	def __repr__(self):
 		return 'Cell(%d, %d)' % (self.col, self.row)
+
+	@property
+	def shape(self):
+		ret = 0
+		ret = ret | NORTH if self.north in self.links else ret
+		ret = ret | EAST if self.east in self.links else ret
+		ret = ret | SOUTH if self.south in self.links else ret
+		ret = ret | WEST if self.west in self.links else ret
+		return ret
 
 
 class Grid(object):
@@ -230,12 +245,27 @@ class GridTest(unittest.TestCase):
 class CellTest(unittest.TestCase):
 
 	def test_cell_list(self):
-		cl = _CellList()
+		cl = _CellList(Cell(None, 0, 0))
 		cl.append(Cell(None, 1, 1))
 		cl.extend([Cell(None, 2, 3)])
 		with self.assertRaises(TypeError):
 			cl.append(3)
 			cl.extend([1, 2, 3])
+
+	def test_cell_shape(self):
+		cm = Cell(None, 1, 1)
+		ce = Cell(None, 2, 1)
+		cs = Cell(None, 1, 2)
+		cm.east = ce
+		ce.west = cm
+		cm.links += [ce]
+		self.assertEqual(cm.shape, 2)
+		self.assertEqual(ce.shape, 8)
+		cm.south = cs
+		cs.north = cm
+		cm.links += [cs]
+		self.assertEqual(cm.shape, 6)
+		self.assertEqual(cs.shape, 1)
 
 
 if __name__ == '__main__':
