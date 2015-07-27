@@ -143,7 +143,7 @@ class Grid(object):
 		top = u'\u250c'
 		for cn in range(self.cols):
 			cell = self._cells[(cn, 0)]
-			if cell.linked(cell.east):
+			if cell.east in cell.links:
 				top += u'\u2500'
 			else:
 				if cn == self.cols - 1:
@@ -158,23 +158,23 @@ class Grid(object):
 				cell = self._cells[(cn, rn)]
 
 				if cn == 0:
-					if cell.linked(cell.south):
+					if cell.south in cell.links:
 						row += u'\u2502'
 					else:
 						row += u'\u251c'
 
 				if cn == self.cols - 1:
-					if cell.linked(cell.south):
+					if cell.south in cell.links:
 						row += u'\u2502'
 					else:
 						row += u'\u2524'
 					continue
 
 				celld = self._cells[(cn + 1, rn + 1)]
-				ab = cell.linked(cell.east)
-				ac = cell.linked(cell.south)
-				bd = cell.east.linked(celld)
-				cd = cell.south.linked(celld)
+				ab = cell.east in cell.links
+				ac = cell.south in cell.links
+				bd = cell.east in celld.links
+				cd = cell.south in celld.links
 				ul = {
 						(True, True, True, True): u' ',
 						(False, False, False, False): u'\u253c',
@@ -202,7 +202,7 @@ class Grid(object):
 		bottom = u'\u2514'
 		for cn in range(self.cols):
 			cell = self._cells[(cn, self.rows - 1)]
-			if cell.linked(cell.east):
+			if cell.east in cell.links:
 				bottom += u'\u2500'
 			else:
 				if cn == self.cols - 1:
@@ -243,7 +243,6 @@ class GridTest(unittest.TestCase):
 
 
 class CellTest(unittest.TestCase):
-
 	def test_cell_list(self):
 		cl = _CellList(Cell(None, 0, 0))
 		cl.append(Cell(None, 1, 1))
