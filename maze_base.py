@@ -4,22 +4,22 @@ from collections import MutableSequence
 
 
 class _CellList(MutableSequence):
-	
+
 	def __init__(self, cell, *args):
 		self.cell = cell
 		self._list = list()
 		self.extend(list(args))
-		
+
 	def _check(self, value):
 		if not isinstance(value, Cell):
 			raise TypeError('Not a Cell: %s' % value)
-		
+
 	def __len__(self):
 		return len(self._list)
-		
+
 	def __getitem__(self, i):
 		return self._list[i]
-		
+
 	def __delitem__(self, i):
 		del self._list[i]
 
@@ -32,10 +32,10 @@ class _CellList(MutableSequence):
 		if bidirection:
 			v.links.insert(0, self.cell, bidirection=False)
 		self._list.insert(i, v)
-		
+
 	def __str__(self):
 		return str(self._list)
-		
+
 
 class Cell (object):
 	def __init__(self, grid, col, row):
@@ -65,13 +65,13 @@ class Grid(object):
 		for col, row in self._cells:
 			loc = (col, row)
 			if row > 0:
-				self._cells[loc].north = self._cells[(col, row-1)]
-			if row < self.rows-1:
-				self._cells[loc].south = self._cells[(col, row+1)]
+				self._cells[loc].north = self._cells[(col, row - 1)]
+			if row < self.rows - 1:
+				self._cells[loc].south = self._cells[(col, row + 1)]
 			if col > 0:
-				self._cells[loc].west = self._cells[(col-1, row)]
-			if col < self.cols-1:
-				self._cells[loc].east = self._cells[(col+1, row)]
+				self._cells[loc].west = self._cells[(col - 1, row)]
+			if col < self.cols - 1:
+				self._cells[loc].east = self._cells[(col + 1, row)]
 
 	def __getitem__(self, key):
 		print key
@@ -102,15 +102,15 @@ class Grid(object):
 
 	def __str__(self):
 		return self.basic_ascii()
-		#return self.fancy_unicode()
-		
-	def basic_ascii(self  ):
+		# return self.fancy_unicode()
+
+	def basic_ascii(self):
 		sep = '+' + '---+' * self.cols
 		lines = [sep]
 		for row in self.iter_rows:
-			#walls = [' ' if cell.linked(cell.east) else '|'
-			#		for cell in row[:-1]]
-			#lines.append('|   ' + '   '.join(walls) + '   |')
+			# walls = [' ' if cell.linked(cell.east) else '|'
+			# 		for cell in row[:-1]]
+			# lines.append('|   ' + '   '.join(walls) + '   |')
 			line = '|'  # Starting wall
 			for cell in row:
 				line += cell.content + (' ' if cell.east in cell.links else '|')
@@ -118,7 +118,7 @@ class Grid(object):
 			if row == self.rows - 1:
 				lines.append(sep)
 				break
-			floors = [' '*3 if cell.south in cell.links else '-'*3
+			floors = [' ' * 3 if cell.south in cell.links else '-' * 3
 					for cell in row]
 			lines.append('+' + '+'.join(floors) + '+')
 
@@ -131,32 +131,31 @@ class Grid(object):
 			if cell.linked(cell.east):
 				top += u'\u2500'
 			else:
-				if cn == self.cols-1:
+				if cn == self.cols - 1:
 					top += u'\u2510'
 				else:
 					top += u'\u252c'
 
 		middles = []
-		for rn in range(self.rows-1):
+		for rn in range(self.rows - 1):
 			row = u''
 			for cn in range(self.cols):
 				cell = self._cells[(cn, rn)]
-				
+
 				if cn == 0:
 					if cell.linked(cell.south):
 						row += u'\u2502'
 					else:
 						row += u'\u251c'
-					#continue
-						
-				if cn == self.cols-1:
+
+				if cn == self.cols - 1:
 					if cell.linked(cell.south):
 						row += u'\u2502'
 					else:
 						row += u'\u2524'
 					continue
-						
-				celld = self._cells[(cn+1, rn+1)]
+
+				celld = self._cells[(cn + 1, rn + 1)]
 				ab = cell.linked(cell.east)
 				ac = cell.linked(cell.south)
 				bd = cell.east.linked(celld)
@@ -164,17 +163,17 @@ class Grid(object):
 				ul = {
 						(True, True, True, True): u' ',
 						(False, False, False, False): u'\u253c',
-						
+
 						(True, False, False, False): u'\u252c',
 						(False, True, False, False): u'\u2524',
 						(False, False, True, False): u'\u2534',
 						(False, False, False, True): u'\u251c',
-						
+
 						(True, True, True, False): u'\u2574',
 						(True, True, False, True): u'\u2577',
 						(True, False, True, True): u'\u2576',
 						(False, True, True, True): u'\u2575',
-						
+
 						(True, True, False, False): u'\u2510',
 						(True, False, True, False): u'\u2500',
 						(True, False, False, True): u'\u250c',
@@ -184,14 +183,14 @@ class Grid(object):
 					}
 				row += ul[(ab, bd, cd, ac)]
 			middles.append(row)
-		
+
 		bottom = u'\u2514'
 		for cn in range(self.cols):
-			cell = self._cells[(cn, self.rows-1)]
+			cell = self._cells[(cn, self.rows - 1)]
 			if cell.linked(cell.east):
 				bottom += u'\u2500'
 			else:
-				if cn == self.cols-1:
+				if cn == self.cols - 1:
 					bottom += u'\u2518'
 				else:
 					bottom += u'\u2534'
@@ -201,8 +200,8 @@ class Grid(object):
 class GridTest(unittest.TestCase):
 	def test_size(self):
 		grid = Grid(5, 5)
-		self.assertTrue(len(grid._cells) == 5*5)
-		self.assertEqual(grid.size, 5*5)
+		self.assertTrue(len(grid._cells) == 5 * 5)
+		self.assertEqual(grid.size, 5 * 5)
 
 	def test_top_left_corner(self):
 		grid = Grid(5, 5)
@@ -226,11 +225,10 @@ class GridTest(unittest.TestCase):
 		self.assertIsInstance(cell1, Cell)
 		self.assertIsInstance(cell2, Cell)
 		self.assertIsInstance(cell3, Cell)
-		# FIXME - this fails
-		#self.assertIsNot(cell1, cell2
+
 
 class CellTest(unittest.TestCase):
-	
+
 	def test_cell_list(self):
 		cl = _CellList()
 		cl.append(Cell(None, 1, 1))
