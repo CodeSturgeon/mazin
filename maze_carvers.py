@@ -72,6 +72,7 @@ class Dijkstra(Carver):
 				else:
 					d = grid.distances[cell, root_cell]
 				for linked in cell.links:
+					# FIXME this will not work for multi-cell need a seen=set()
 					if (root_cell, linked) not in grid.distances:
 						if iter:
 							yield linked
