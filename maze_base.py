@@ -1,6 +1,6 @@
 import unittest
 import random
-from collections import MutableSequence
+from collections import MutableSequence, MutableMapping
 
 N = NORTH = 0x1
 E = EAST = 0x2
@@ -8,6 +8,30 @@ S = SOUTH = 0x4
 W = WEST = 0x8
 
 DIRECTIONS = (NORTH, EAST, SOUTH, WEST)
+
+
+class KeySortingDict(MutableMapping):
+	def __init__(self):
+		self._dict = dict()
+		self._keygen = lambda k: tuple(sorted(k))
+
+	def __getitem__(self, key):
+		key = self._keygen(key)
+		return self._dict[key]
+
+	def __setitem__(self, key, value):
+		key = self._keygen(key)
+		self._dict[key] = value
+
+	def __delitem__(self, key):
+		key = self._keygen(key)
+		del self._dict[key]
+
+	def __iter__(self):
+		return iter(self._dict)
+
+	def __len__(self):
+		return len(self._dict)
 
 
 class _CellList(MutableSequence):
@@ -265,6 +289,13 @@ class CellTest(unittest.TestCase):
 		cm.links += [cs]
 		self.assertEqual(cm.shape, 6)
 		self.assertEqual(cs.shape, 1)
+
+
+class TestKeySortingDict(unittest.TestCase):
+	def test_ksd_basic(self):
+		ksd = KeySortingDict()
+		ksd[(2, 2), (1, 1)] = 99
+		self.assertEqual(ksd[(1, 1), (2, 2)], 99)
 
 
 if __name__ == '__main__':
