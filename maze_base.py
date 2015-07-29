@@ -13,7 +13,9 @@ DIRECTIONS = (NORTH, EAST, SOUTH, WEST)
 class KeySortingDict(MutableMapping):
 	def __init__(self):
 		self._dict = dict()
-		self._keygen = lambda k: tuple(sorted(k))
+
+	def _keygen(self, key):
+		return tuple(sorted(key))
 
 	def __getitem__(self, key):
 		key = self._keygen(key)
@@ -32,6 +34,17 @@ class KeySortingDict(MutableMapping):
 
 	def __len__(self):
 		return len(self._dict)
+
+	def __str__(self):
+		return str(self._dict)
+
+
+class CellSortingDict(KeySortingDict):
+	def _kgen(self, k):
+		if not isinstance(k, tuple) or not isinstance(k[0], Cell) or \
+				not isinstance(k[1], Cell):
+			raise TypeError
+		return tuple(sorted(((k[0].col, k[0].row), (k[1].col, k[1].row))))
 
 
 class _CellList(MutableSequence):
@@ -96,6 +109,7 @@ class Grid(object):
 	def __init__(self, cols, rows):
 		self.cols = cols
 		self.rows = rows
+		self.distances = CellSortingDict()
 		self._cells = {}
 		for col in range(cols):
 			for row in range(rows):
