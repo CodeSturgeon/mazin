@@ -72,6 +72,7 @@ class TestUnroller(unittest.TestCase):
 			for x in range(steps):
 				yield 1
 
+		self.assertIsNone(stepper())
 		self.assertIsNone(stepper(steps=0))
 		self.assertEqual(sum([r for r in stepper(steps=5)]), 5)
 

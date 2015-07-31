@@ -6,72 +6,54 @@ import mazin
 def unroll_steps_zero(f):
 	@wraps(f)
 	def wrapper(*args, **kwargs):
-		if 'steps' in kwargs and kwargs['steps'] == 0:
+		if 'steps' in kwargs and kwargs['steps'] != 0:
+			return f(*args, **kwargs)
+		else:
 			for x in f(*args, **kwargs):
 				pass
-		else:
-			return f(*args, **kwargs)
 	return wrapper
 
 
-# FIXME should be a decorator that detects noiter
-class Carver(object):
-	def __call__(self, *args, **kwargs):
-		# FIXME ugly!
-		iter = 'iter' in kwargs
-		grid = args[0]
-		if not iter:
-			for x in self.carver(*args, iter=False):
-				pass
-		else:
-			return self.carver(grid)
+@unroll_steps_zero
+def btree(grid, steps=0):
+	for cell in grid.iter_rowcells:
+		if steps:
+			yield cell
+		neighbors = []
+		if cell.north:
+			neighbors += [cell.north]
+		if cell.east:
+			neighbors += [cell.east]
 
-	def carver(self, grid):
-		raise NotImplemented
+		if not neighbors:
+			continue
+
+		cell.links += [random.choice(neighbors)]
 
 
-class Btree(Carver):
-	def carver(self, grid, iter=False):
-		# FIXME bad var name
-		for cell in grid.iter_rowcells:
-			if iter:
+@unroll_steps_zero
+def sidewinder(grid, steps=0):
+	for row in grid.iter_rows:
+		run = []
+		for cell in row:
+			if steps:
 				yield cell
-			neighbors = []
-			if cell.north:
-				neighbors += [cell.north]
-			if cell.east:
-				neighbors += [cell.east]
+			run.append(cell)
+			nbound = cell.north is None
+			ebound = cell.east is None
 
-			if not neighbors:
-				continue
-
-			cell.links += [random.choice(neighbors)]
-
-
-class Sidewinder(Carver):
-	def carver(self, grid, iter=False):
-		# FIXME bad var name
-		for row in grid.iter_rows:
-			run = []
-			for cell in row:
-				if iter:
-					yield cell
-				run.append(cell)
-				nbound = cell.north is None
-				ebound = cell.east is None
-
-				closing = ebound or (not nbound and random.randint(0, 1))
-				if closing:
-					member = random.choice(run)
-					if member.north:
-						member.links += [member.north]
-						run = []
-				else:
-					cell.links += [cell.east]
+			closing = ebound or (not nbound and random.randint(0, 1))
+			if closing:
+				member = random.choice(run)
+				if member.north:
+					member.links += [member.north]
+					run = []
+			else:
+				cell.links += [cell.east]
 
 
-class Dijkstra(Carver):
-	def carver(self, grid, root_cell, iter=False):
+@unroll_steps_zero
+def dijkstra(grid, root_cell, steps=0):
 		# FIXME should pass the dict, not the grid
 		frontier = [root_cell]
 		grid.distances[root_cell, root_cell] = 0
@@ -101,15 +83,15 @@ if __name__ == '__main__':
 		pass
 
 	btree_grid = mazin.Grid(5, 5)
-	Btree()(btree_grid)
+	btree(btree_grid)
 	print btree_grid, '\n'
 
 	sidewinder_grid = mazin.Grid(5, 5)
-	Sidewinder()(sidewinder_grid)
+	sidewinder(sidewinder_grid)
 	print sidewinder_grid, '\n'
 
 	root = sidewinder_grid._cells[(0, 0)]
-	Dijkstra()(sidewinder_grid, root)
+	dijkstra(sidewinder_grid, root)
 
 	for cell in sidewinder_grid.iter_cells:
 		cell.content = '%2d ' % sidewinder_grid.distances[root, cell]
