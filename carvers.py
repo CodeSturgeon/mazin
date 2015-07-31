@@ -1,6 +1,6 @@
 import random
-import maze_base
-reload(maze_base)
+import mazin
+reload(mazin)
 
 
 # FIXME should be a decorator that detects noiter
@@ -89,11 +89,11 @@ if __name__ == '__main__':
 	except ImportError:
 		pass
 
-	btree_grid = maze_base.Grid(5, 5)
+	btree_grid = mazin.Grid(5, 5)
 	Btree()(btree_grid)
 	print btree_grid, '\n'
 
-	sidewinder_grid = maze_base.Grid(5, 5)
+	sidewinder_grid = mazin.Grid(5, 5)
 	Sidewinder()(sidewinder_grid)
 	print sidewinder_grid, '\n'
 

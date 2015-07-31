@@ -1,8 +1,7 @@
 from scene import *
-import maze_base
-reload(maze_base)
-import maze_carvers
-reload(maze_carvers)
+import mazin
+reload(mazin)
+
 
 class GridScene(Scene):
 
@@ -41,7 +40,7 @@ class GridScene(Scene):
 
 		self.hpad = (self.size.w - (self.cols * self.cell_size))/2
 		self.vpad = (self.size.h - (self.rows * self.cell_size))/2
-		self.grid = maze_base.Grid(self.cols, self.rows)
+		self.grid = mazin.Grid(self.cols, self.rows)
 
 		self.itr = self.carver(self.grid, True)
 
@@ -83,7 +82,7 @@ class GridScene(Scene):
 				line(x1, y2, x2, y2)
 
 
-scene = GridScene(maze_carvers.btree, 10)
+scene = GridScene(mazin.carvers.Btree(), 10)
 run(scene)
 
 # vim:ts=4:noexpandtab

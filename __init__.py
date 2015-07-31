@@ -312,7 +312,7 @@ class TestKeySortingDict(unittest.TestCase):
 		self.assertEqual(ksd[(1, 1), (2, 2)], 99)
 
 
-if __name__ == '__main__':
+def main():
 	try:
 		import console
 		console.clear()
@@ -322,5 +322,9 @@ if __name__ == '__main__':
 	grid = Grid(4, 4)
 	print grid
 	unittest.main()
+
+
+if __name__ == '__main__':
+	main()
 
 # vim:ts=4:noexpandtab
