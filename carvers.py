@@ -1,6 +1,17 @@
 import random
+from functools import wraps
 import mazin
-reload(mazin)
+
+
+def unroll_steps_zero(f):
+	@wraps(f)
+	def wrapper(*args, **kwargs):
+		if 'steps' in kwargs and kwargs['steps'] == 0:
+			for x in f(*args, **kwargs):
+				pass
+		else:
+			return f(*args, **kwargs)
+	return wrapper
 
 
 # FIXME should be a decorator that detects noiter
@@ -97,7 +108,7 @@ if __name__ == '__main__':
 	Sidewinder()(sidewinder_grid)
 	print sidewinder_grid, '\n'
 
-	root = sidewinder_grid._cells[(0,0)]
+	root = sidewinder_grid._cells[(0, 0)]
 	Dijkstra()(sidewinder_grid, root)
 
 	for cell in sidewinder_grid.iter_cells:

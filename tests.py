@@ -1,5 +1,6 @@
 import unittest
 from mazin import Grid, Cell, _CellList, KeySortingDict
+from mazin.carvers import unroll_steps_zero
 
 
 class GridTest(unittest.TestCase):
@@ -62,6 +63,17 @@ class TestKeySortingDict(unittest.TestCase):
 		ksd = KeySortingDict()
 		ksd[(2, 2), (1, 1)] = 99
 		self.assertEqual(ksd[(1, 1), (2, 2)], 99)
+
+
+class TestUnroller(unittest.TestCase):
+	def test_simple(self):
+		@unroll_steps_zero
+		def stepper(steps=0):
+			for x in range(steps):
+				yield 1
+
+		self.assertIsNone(stepper(steps=0))
+		self.assertEqual(sum([r for r in stepper(steps=5)]), 5)
 
 
 def main():
