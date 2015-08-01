@@ -15,7 +15,10 @@ def unroll_steps_zero(f):
 
 
 @unroll_steps_zero
-def btree(grid, steps=0):
+def btree(grid, seed=None, steps=0):
+	r = random.Random()
+	if seed:
+		r.seed(seed)
 	for cell in grid.iter_rowcells:
 		if steps:
 			yield cell
@@ -28,11 +31,14 @@ def btree(grid, steps=0):
 		if not neighbors:
 			continue
 
-		cell.links += [random.choice(neighbors)]
+		cell.links += [r.choice(neighbors)]
 
 
 @unroll_steps_zero
-def sidewinder(grid, steps=0):
+def sidewinder(grid, seed=None, steps=0):
+	r = random.Random()
+	if seed:
+		r.seed(seed)
 	for row in grid.iter_rows:
 		run = []
 		for cell in row:
@@ -42,9 +48,9 @@ def sidewinder(grid, steps=0):
 			nbound = cell.north is None
 			ebound = cell.east is None
 
-			closing = ebound or (not nbound and random.randint(0, 1))
+			closing = ebound or (not nbound and r.randint(0, 1))
 			if closing:
-				member = random.choice(run)
+				member = r.choice(run)
 				if member.north:
 					member.links += [member.north]
 					run = []
@@ -83,11 +89,11 @@ if __name__ == '__main__':
 		pass
 
 	btree_grid = mazin.Grid(5, 5)
-	btree(btree_grid)
+	btree(btree_grid, seed=5)
 	print btree_grid, '\n'
 
 	sidewinder_grid = mazin.Grid(5, 5)
-	sidewinder(sidewinder_grid)
+	sidewinder(sidewinder_grid, seed=5)
 	print sidewinder_grid, '\n'
 
 	root = sidewinder_grid._cells[(0, 0)]
