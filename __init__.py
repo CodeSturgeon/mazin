@@ -83,6 +83,7 @@ class _CellList(MutableSequence):
 class Cell (object):
 	def __init__(self, grid, col, row):
 		self.grid = grid
+		self.color = (255, 255, 255)
 		self.col = col
 		self.row = row
 		self.north = None
