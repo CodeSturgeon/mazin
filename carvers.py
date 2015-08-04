@@ -58,9 +58,9 @@ def sidewinder(grid, seed=None, steps=0):
 				cell.links += [cell.east]
 
 
+# FIXME should this really be here?
 @unroll_steps_zero
 def dijkstra(grid, root_cell, steps=0):
-		# FIXME should pass the dict, not the grid
 		frontier = [root_cell]
 		grid.distances[root_cell, root_cell] = 0
 		while frontier:
@@ -81,6 +81,24 @@ def dijkstra(grid, root_cell, steps=0):
 			frontier = new_frontier
 
 
+# FIXME should this really be here?
+def colorize_distance(grid, root_cell):
+		max_distance = max(grid.distances.values())
+		step_size = 220 / max_distance
+		for cell in grid.iter_cells:
+			cell.color = (
+					0,
+					35 + (200 - (step_size * grid.distances[root_cell, cell])),
+					0
+				)
+
+
+# FIXME should this really be here?
+def content_distance(grid, root_cell):
+	for cell in grid.iter_cells:
+		cell.content = '%2d ' % grid.distances[root_cell, cell]
+
+
 if __name__ == '__main__':
 	try:
 		import console
@@ -98,9 +116,8 @@ if __name__ == '__main__':
 
 	root = sidewinder_grid._cells[(0, 0)]
 	dijkstra(sidewinder_grid, root)
+	content_distance(sidewinder_grid, root)
 
-	for cell in sidewinder_grid.iter_cells:
-		cell.content = '%2d ' % sidewinder_grid.distances[root, cell]
 	print sidewinder_grid
 
 # vim:ts=4:noexpandtab

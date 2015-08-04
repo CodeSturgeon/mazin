@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw
 from mazin import Grid
-from mazin.carvers import btree
+from mazin.carvers import btree, dijkstra, colorize_distance
 
 
 def make_grid_image(grid, cell_size=20, hpad=4, vpad=4):
@@ -38,7 +38,11 @@ def make_grid_image(grid, cell_size=20, hpad=4, vpad=4):
 
 
 if __name__ == '__main__':
-    grid = Grid(5, 5)
-    btree(grid, seed=101)
-    im = make_grid_image(grid)
+    grid = Grid(50, 30)
+    btree(grid, seed=191)
+    root = grid._cells[(grid.cols / 2, grid.rows / 2)]
+    #root = grid._cells[(grid.cols - 1, 0)]
+    dijkstra(grid, root)
+    colorize_distance(grid, root)
+    im = make_grid_image(grid, cell_size=8)
     im.save('test_maze.png', "PNG")
