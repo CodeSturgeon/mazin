@@ -92,6 +92,8 @@ class Cell (object):
 		self.west = None
 		self.content = '   '
 		self.links = _CellList(self)
+		# FIXME this is sloppy, crossing bounds with the NESW of the cell
+		self.neighbors = []
 
 	def __repr__(self):
 		return 'Cell(%d, %d)' % (self.col, self.row)
@@ -118,14 +120,20 @@ class Grid(object):
 
 		for col, row in self._cells:
 			loc = (col, row)
+			cell = self._cells[loc]
 			if row > 0:
-				self._cells[loc].north = self._cells[(col, row - 1)]
+				cell.north = self._cells[(col, row - 1)]
+				cell.neighbors += [self._cells[(col, row - 1)]]
 			if row < self.rows - 1:
-				self._cells[loc].south = self._cells[(col, row + 1)]
+				cell.south = self._cells[(col, row + 1)]
+				cell.neighbors += [self._cells[(col, row + 1)]]
 			if col > 0:
-				self._cells[loc].west = self._cells[(col - 1, row)]
+				cell.west = self._cells[(col - 1, row)]
+				cell.neighbors += [self._cells[(col - 1, row)]]
 			if col < self.cols - 1:
-				self._cells[loc].east = self._cells[(col + 1, row)]
+				cell.east = self._cells[(col + 1, row)]
+				cell.neighbors += [self._cells[(col + 1, row)]]
+
 
 	def __getitem__(self, key):
 		print key
