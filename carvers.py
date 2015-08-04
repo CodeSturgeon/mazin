@@ -81,6 +81,36 @@ def sidewinder(grid, seed=None, steps=0):
 				cell.links += [cell.east]
 
 
+@unroll_steps_zero
+def wilsons(grid, seed=None, steps=0):
+	r = random.Random()
+	if seed:
+		r.seed(seed)
+	unvisited = grid._cells.values()
+	first = r.choice(unvisited)
+	unvisited.remove(first)
+
+	while unvisited:
+		cell = r.choice(unvisited)
+		path = [cell]
+
+		while cell in unvisited:
+			if steps:
+				yield cell
+			cell = r.choice(cell.neighbors)
+
+			if cell in path:
+				position = path.index(cell)
+				path = path[0:position]
+			path.append(cell)
+
+		while path:
+			cell = path.pop(0)
+			if path:
+				cell.links += [path[0]]
+				unvisited.remove(cell)
+
+
 # FIXME should this really be here?
 @unroll_steps_zero
 def dijkstra(grid, root_cell, steps=0):
@@ -146,5 +176,9 @@ if __name__ == '__main__':
 	content_distance(sidewinder_grid, root)
 
 	print sidewinder_grid
+
+	wilsons_grid = mazin.Grid(5, 5)
+	wilsons(wilsons_grid, seed=5)
+	print wilsons_grid, '\n'
 
 # vim:ts=4:noexpandtab
