@@ -35,6 +35,29 @@ def btree(grid, seed=None, steps=0):
 
 
 @unroll_steps_zero
+def aldous_broder(grid, seed=None, steps=0):
+	r = random.Random()
+	if seed:
+		r.seed(seed)
+	cell = grid._cells[(
+			r.randint(0, grid.cols - 1),
+			r.randint(0, grid.rows - 1)
+		)]
+	unvisited = grid.size - 1
+
+	while unvisited > 0:
+		if steps > 0:
+			yield cell
+		neighbor = r.choice(cell.neighbors)
+
+		if not neighbor.links:
+			cell.links += [neighbor]
+			unvisited -= 1
+
+		cell = neighbor
+
+
+@unroll_steps_zero
 def sidewinder(grid, seed=None, steps=0):
 	r = random.Random()
 	if seed:
@@ -113,6 +136,10 @@ if __name__ == '__main__':
 	sidewinder_grid = mazin.Grid(5, 5)
 	sidewinder(sidewinder_grid, seed=5)
 	print sidewinder_grid, '\n'
+
+	aldous_broder_grid = mazin.Grid(5, 5)
+	aldous_broder(aldous_broder_grid, seed=5)
+	print aldous_broder_grid
 
 	root = sidewinder_grid._cells[(0, 0)]
 	dijkstra(sidewinder_grid, root)
