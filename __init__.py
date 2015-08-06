@@ -11,6 +11,7 @@ DIRECTIONS = (NORTH, EAST, SOUTH, WEST)
 
 
 class KeySortingDict(MutableMapping):
+	"""A dict where the key is passed through sort for getting and setting"""
 	def __init__(self):
 		self._dict = dict()
 
@@ -40,7 +41,8 @@ class KeySortingDict(MutableMapping):
 
 
 class CellSortingDict(KeySortingDict):
-	def _kgen(self, k):
+	"""Only accepts cells as keys"""
+	def _keygen(self, k):
 		if not isinstance(k, tuple) or not isinstance(k[0], Cell) or \
 				not isinstance(k[1], Cell):
 			raise TypeError
@@ -80,7 +82,7 @@ class _CellList(MutableSequence):
 		return str(self._list)
 
 
-class Cell (object):
+class Cell(object):
 	def __init__(self, grid, col, row):
 		self.grid = grid
 		self.color = (255, 255, 255)

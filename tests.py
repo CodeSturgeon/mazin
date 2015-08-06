@@ -1,5 +1,5 @@
 import unittest
-from mazin import Grid, Cell, _CellList, KeySortingDict
+from mazin import Grid, Cell, _CellList, KeySortingDict, CellSortingDict
 from mazin.carvers import unroll_steps_zero
 
 
@@ -63,6 +63,18 @@ class TestKeySortingDict(unittest.TestCase):
 		ksd = KeySortingDict()
 		ksd[(2, 2), (1, 1)] = 99
 		self.assertEqual(ksd[(1, 1), (2, 2)], 99)
+
+
+class TestCellSortingDict(unittest.TestCase):
+	def test_csd_basic(self):
+		csd = CellSortingDict()
+		c1 = Cell(None, 1, 1)
+		c2 = Cell(None, 2, 2)
+		csd[c1, c2] = 99
+		self.assertEqual(csd[c1, c2], 99)
+		self.assertEqual(csd[c2, c1], 99)
+		with self.assertRaises(TypeError):
+			csd[(2, 2), (1, 1)] = 99
 
 
 class TestUnroller(unittest.TestCase):
