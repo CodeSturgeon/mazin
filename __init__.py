@@ -1,6 +1,6 @@
 import unittest
 import random
-from collections import MutableSequence, MutableMapping
+from collections import MutableSequence, MutableMapping, defaultdict
 
 N = NORTH = 0x1
 E = EAST = 0x2
@@ -111,31 +111,41 @@ class Cell(object):
 
 
 class Grid(object):
-	def __init__(self, cols, rows):
+	def __init__(self, cols, rows, mask=None):
 		self.cols = cols
 		self.rows = rows
+		self.mask = mask or defaultdict(lambda : True)
 		self.distances = CellSortingDict()
+		self._populate()
+
+	def _populate(self):
 		self._cells = {}
-		for col in range(cols):
-			for row in range(rows):
-				self._cells[(col, row)] = Cell(self, col, row)
+		for col in range(self.cols):
+			for row in range(self.rows):
+				if self.mask[(col, row)]:
+					self._cells[(col, row)] = Cell(self, col, row)
 
-		for col, row in self._cells:
-			loc = (col, row)
-			cell = self._cells[loc]
-			if row > 0:
-				cell.north = self._cells[(col, row - 1)]
-				cell.neighbors += [self._cells[(col, row - 1)]]
-			if row < self.rows - 1:
-				cell.south = self._cells[(col, row + 1)]
-				cell.neighbors += [self._cells[(col, row + 1)]]
-			if col > 0:
-				cell.west = self._cells[(col - 1, row)]
-				cell.neighbors += [self._cells[(col - 1, row)]]
-			if col < self.cols - 1:
-				cell.east = self._cells[(col + 1, row)]
-				cell.neighbors += [self._cells[(col + 1, row)]]
-
+		directions = (
+				(0, 1, 'south'),
+				(1, 0, 'east'),
+				(0, -1, 'north'),
+				(-1, 0, 'west'),
+			)
+		for col in range(self.cols):
+			for row in range(self.rows):
+				loc = (col, row)
+				if not self.mask[loc]:
+					continue
+				cell = self._cells[loc]
+				for dcol, drow, dname in directions:
+					dloc = (col + dcol, row + drow)
+					try:
+						dcell = self._cells[dloc]
+					except KeyError:
+						continue
+					else:
+						cell.neighbors += [dcell]
+						setattr(cell, dname, dcell)
 
 	def __getitem__(self, key):
 		print key
@@ -143,7 +153,7 @@ class Grid(object):
 
 	@property
 	def size(self):
-		return self.rows * self.cols
+		return len(self._cells)
 
 	@property
 	def random_cell(self):
@@ -152,13 +162,15 @@ class Grid(object):
 	@property
 	def iter_rows(self):
 		for rn in range(self.rows):
-			yield [self._cells[(cn, rn)] for cn in range(self.cols)]
+			yield [self._cells[(cn, rn)]
+					for cn in range(self.cols) if self.mask[(cn, rn)]]
 
 	@property
 	def iter_rowcells(self):
 		for rn in range(self.rows):
 			for cn in range(self.cols):
-				yield self._cells[(cn, rn)]
+				if self.mask[(cn, rn)]:
+					yield self._cells[(cn, rn)]
 
 	@property
 	def iter_cells(self):
@@ -171,19 +183,23 @@ class Grid(object):
 	def basic_ascii(self):
 		sep = '+' + '---+' * self.cols
 		lines = [sep]
-		for row in self.iter_rows:
+		for rn in range(self.rows):
 			# walls = [' ' if cell.linked(cell.east) else '|'
 			# 		for cell in row[:-1]]
 			# lines.append('|   ' + '   '.join(walls) + '   |')
 			line = '|'  # Starting wall
-			for cell in row:
+			floors = []
+			for cn in range(self.cols):
+				if self.mask[(cn, rn)]:
+					cell = self._cells[(cn, rn)]
+				else:
+					cell = Cell(None, cn, rn)
 				line += cell.content + (' ' if cell.east in cell.links else '|')
+				floors += [' ' * 3 if cell.south in cell.links else '-' * 3]
 			lines.append(line)
-			if row == self.rows - 1:
+			if rn == self.rows - 1:
 				lines.append(sep)
 				break
-			floors = [' ' * 3 if cell.south in cell.links else '-' * 3
-					for cell in row]
 			lines.append('+' + '+'.join(floors) + '+')
 
 		return '\n'.join(lines)
