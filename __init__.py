@@ -7,8 +7,12 @@ E = EAST = 0x2
 S = SOUTH = 0x4
 W = WEST = 0x8
 
-DIRECTIONS = (NORTH, EAST, SOUTH, WEST)
-
+DIRECTIONS = (
+		(0, -1, 'north', NORTH),
+		(1, 0, 'east', EAST),
+		(0, 1, 'south', SOUTH),
+		(-1, 0, 'west', WEST),
+	)
 
 class KeySortingDict(MutableMapping):
 	"""A dict where the key is passed through sort for getting and setting"""
@@ -83,8 +87,7 @@ class _CellList(MutableSequence):
 
 
 class Cell(object):
-	def __init__(self, grid, col, row):
-		self.grid = grid
+	def __init__(self, col, row):
 		self.color = (255, 255, 255)
 		self.col = col
 		self.row = row
@@ -123,21 +126,15 @@ class Grid(object):
 		for col in range(self.cols):
 			for row in range(self.rows):
 				if self.mask[(col, row)]:
-					self._cells[(col, row)] = Cell(self, col, row)
+					self._cells[(col, row)] = Cell(col, row)
 
-		directions = (
-				(0, 1, 'south'),
-				(1, 0, 'east'),
-				(0, -1, 'north'),
-				(-1, 0, 'west'),
-			)
 		for col in range(self.cols):
 			for row in range(self.rows):
 				loc = (col, row)
 				if not self.mask[loc]:
 					continue
 				cell = self._cells[loc]
-				for dcol, drow, dname in directions:
+				for dcol, drow, dname, dbit in DIRECTIONS:
 					dloc = (col + dcol, row + drow)
 					try:
 						dcell = self._cells[dloc]

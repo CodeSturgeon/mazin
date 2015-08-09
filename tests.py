@@ -35,17 +35,17 @@ class GridTest(unittest.TestCase):
 
 class CellTest(unittest.TestCase):
 	def test_cell_list(self):
-		cl = _CellList(Cell(None, 0, 0))
-		cl.append(Cell(None, 1, 1))
-		cl.extend([Cell(None, 2, 3)])
+		cl = _CellList(Cell(0, 0))
+		cl.append(Cell(1, 1))
+		cl.extend([Cell(2, 3)])
 		with self.assertRaises(TypeError):
 			cl.append(3)
 			cl.extend([1, 2, 3])
 
 	def test_cell_shape(self):
-		cm = Cell(None, 1, 1)
-		ce = Cell(None, 2, 1)
-		cs = Cell(None, 1, 2)
+		cm = Cell(1, 1)
+		ce = Cell(2, 1)
+		cs = Cell(1, 2)
 		cm.east = ce
 		ce.west = cm
 		cm.links += [ce]
@@ -68,8 +68,8 @@ class TestKeySortingDict(unittest.TestCase):
 class TestCellSortingDict(unittest.TestCase):
 	def test_csd_basic(self):
 		csd = CellSortingDict()
-		c1 = Cell(None, 1, 1)
-		c2 = Cell(None, 2, 2)
+		c1 = Cell(1, 1)
+		c2 = Cell(2, 2)
 		csd[c1, c2] = 99
 		self.assertEqual(csd[c1, c2], 99)
 		self.assertEqual(csd[c2, c1], 99)
