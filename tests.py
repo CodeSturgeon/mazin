@@ -89,6 +89,17 @@ class TestUnroller(unittest.TestCase):
 		self.assertEqual(sum([r for r in stepper(steps=5)]), 5)
 
 
+class TestLinker(unittest.TestCase):
+	def test_basics(self):
+		grid = Grid(3, 3)
+		c = grid._cells[(1, 1)]
+		self.assertFalse(c.links, 'Starting with no links')
+		self.assertFalse(c.link.north, 'No link north')
+		c.link.north = True
+		self.assertTrue(c.north in c.links, 'North should be in links now')
+		self.assertTrue(c.link.north, 'North should be linked')
+
+
 def main():
 	try:
 		import console

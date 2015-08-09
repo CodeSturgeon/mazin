@@ -86,6 +86,33 @@ class _CellList(MutableSequence):
 		return str(self._list)
 
 
+class Linker(object):
+	def __init__(self, cell):
+		self.cell = cell
+
+	def __getattr__(self, name):
+		if name not in [d[2] for d in DIRECTIONS]:
+			raise AttributeError
+		return getattr(self.cell, name) in self.cell.links
+
+	def __setattr__(self, name, value):
+		if name == 'cell':
+			self.__dict__[name] = value
+			return
+		if name not in [d[2] for d in DIRECTIONS]:
+			raise AttributeError
+		target = getattr(self.cell, name)
+		if target is None and value:
+			# No linking to something that is not there
+			raise AttributeError  # FIXME this is wrong type
+
+		linked = target in self.cell.links
+		if value and not linked:
+			self.cell.links += [target]
+		elif not value and linked:
+			self.cell.links.remove(target)
+
+
 class Cell(object):
 	def __init__(self, col, row):
 		self.color = (255, 255, 255)
@@ -96,6 +123,7 @@ class Cell(object):
 		self.east = None
 		self.west = None
 		self.content = '   '
+		self.link = Linker(self)
 		self.links = _CellList(self)
 		# FIXME this is sloppy, crossing bounds with the NESW of the cell
 		self.neighbors = []
