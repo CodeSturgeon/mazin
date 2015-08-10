@@ -1,5 +1,6 @@
 import unittest
-from mazin import Grid, Cell, _CellList, KeySortingDict, CellSortingDict
+from mazin.cell import Cell, CellList
+from mazin.grid import Grid, KeySortingDict, CellSortingDict
 from mazin.carvers import unroll_steps_zero
 
 
@@ -35,7 +36,7 @@ class GridTest(unittest.TestCase):
 
 class CellTest(unittest.TestCase):
 	def test_cell_list(self):
-		cl = _CellList(Cell(0, 0))
+		cl = CellList(Cell(0, 0))
 		cl.append(Cell(1, 1))
 		cl.extend([Cell(2, 3)])
 		with self.assertRaises(TypeError):
