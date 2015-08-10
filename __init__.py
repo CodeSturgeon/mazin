@@ -134,10 +134,8 @@ class Cell(object):
 	@property
 	def shape(self):
 		ret = 0
-		ret = ret | NORTH if self.north in self.links else ret
-		ret = ret | EAST if self.east in self.links else ret
-		ret = ret | SOUTH if self.south in self.links else ret
-		ret = ret | WEST if self.west in self.links else ret
+		for dcol, drow, dname, dbit in DIRECTIONS:
+			ret = ret | dbit if getattr(self, dname) else ret
 		return ret
 
 
