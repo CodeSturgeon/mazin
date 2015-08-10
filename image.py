@@ -37,6 +37,17 @@ def make_grid_image(grid, cell_size=20, hpad=4, vpad=4):
     return im
 
 
+def colorize_distance(grid, root_cell):
+    max_distance = max(grid.distances.values())
+    step_size = 220 / max_distance
+    for cell in grid.iter_cells:
+        cell.color = (
+                0,
+                35 + (200 - (step_size * grid.distances[root_cell, cell])),
+                0
+            )
+
+
 if __name__ == '__main__':
     grid = Grid(50, 30)
     btree(grid, seed=191)

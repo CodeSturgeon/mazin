@@ -123,18 +123,6 @@ def dijkstra(grid, root_cell, steps=0):
 
 
 # FIXME should this really be here?
-def colorize_distance(grid, root_cell):
-		max_distance = max(grid.distances.values())
-		step_size = 220 / max_distance
-		for cell in grid.iter_cells:
-			cell.color = (
-					0,
-					35 + (200 - (step_size * grid.distances[root_cell, cell])),
-					0
-				)
-
-
-# FIXME should this really be here?
 def content_distance(grid, root_cell):
 	for cell in grid.iter_cells:
 		cell.content = '%2d ' % grid.distances[root_cell, cell]
