@@ -15,10 +15,7 @@ def unroll_steps_zero(f):
 
 
 @unroll_steps_zero
-def btree(grid, seed=None, steps=0):
-	r = random.Random()
-	if seed:
-		r.seed(seed)
+def btree(grid, steps=0):
 	for cell in grid.iter_rowcells:
 		if steps:
 			yield cell
@@ -31,24 +28,21 @@ def btree(grid, seed=None, steps=0):
 		if not neighbors:
 			continue
 
-		cell.links += [r.choice(neighbors)]
+		cell.links += [random.choice(neighbors)]
 
 
 @unroll_steps_zero
-def aldous_broder(grid, seed=None, steps=0):
-	r = random.Random()
-	if seed:
-		r.seed(seed)
+def aldous_broder(grid, steps=0):
 	cell = grid._cells[(
-			r.randint(0, grid.cols - 1),
-			r.randint(0, grid.rows - 1)
+			random.randint(0, grid.cols - 1),
+			random.randint(0, grid.rows - 1)
 		)]
 	unvisited = grid.size - 1
 
 	while unvisited > 0:
 		if steps > 0:
 			yield cell
-		neighbor = r.choice(cell.neighbors)
+		neighbor = random.choice(cell.neighbors)
 
 		if not neighbor.links:
 			cell.links += [neighbor]
@@ -58,10 +52,7 @@ def aldous_broder(grid, seed=None, steps=0):
 
 
 @unroll_steps_zero
-def sidewinder(grid, seed=None, steps=0):
-	r = random.Random()
-	if seed:
-		r.seed(seed)
+def sidewinder(grid, steps=0):
 	for row in grid.iter_rows:
 		run = []
 		for cell in row:
@@ -71,9 +62,9 @@ def sidewinder(grid, seed=None, steps=0):
 			nbound = cell.north is None
 			ebound = cell.east is None
 
-			closing = ebound or (not nbound and r.randint(0, 1))
+			closing = ebound or (not nbound and random.randint(0, 1))
 			if closing:
-				member = r.choice(run)
+				member = random.choice(run)
 				if member.north:
 					member.links += [member.north]
 					run = []
@@ -82,22 +73,19 @@ def sidewinder(grid, seed=None, steps=0):
 
 
 @unroll_steps_zero
-def wilsons(grid, seed=None, steps=0):
-	r = random.Random()
-	if seed:
-		r.seed(seed)
+def wilsons(grid, steps=0):
 	unvisited = grid._cells.values()
-	first = r.choice(unvisited)
+	first = random.choice(unvisited)
 	unvisited.remove(first)
 
 	while unvisited:
-		cell = r.choice(unvisited)
+		cell = random.choice(unvisited)
 		path = [cell]
 
 		while cell in unvisited:
 			if steps:
 				yield cell
-			cell = r.choice(cell.neighbors)
+			cell = random.choice(cell.neighbors)
 
 			if cell in path:
 				position = path.index(cell)
@@ -159,16 +147,17 @@ if __name__ == '__main__':
 	except ImportError:
 		pass
 
+	random.seed(5)
 	btree_grid = mazin.Grid(5, 5)
-	btree(btree_grid, seed=5)
+	btree(btree_grid)
 	print btree_grid, '\n'
 
 	sidewinder_grid = mazin.Grid(5, 5)
-	sidewinder(sidewinder_grid, seed=5)
+	sidewinder(sidewinder_grid)
 	print sidewinder_grid, '\n'
 
 	aldous_broder_grid = mazin.Grid(5, 5)
-	aldous_broder(aldous_broder_grid, seed=5)
+	aldous_broder(aldous_broder_grid)
 	print aldous_broder_grid
 
 	root = sidewinder_grid._cells[(0, 0)]
@@ -178,7 +167,7 @@ if __name__ == '__main__':
 	print sidewinder_grid
 
 	wilsons_grid = mazin.Grid(5, 5)
-	wilsons(wilsons_grid, seed=5)
+	wilsons(wilsons_grid)
 	print wilsons_grid, '\n'
 
 # vim:ts=4:noexpandtab
