@@ -104,7 +104,7 @@ class Linker(object):
 		target = getattr(self.cell, name)
 		if target is None and value:
 			# No linking to something that is not there
-			raise AttributeError  # FIXME this is wrong type
+			raise AttributeError
 
 		linked = target in self.cell.links
 		if value and not linked:
