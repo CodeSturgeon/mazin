@@ -112,6 +112,12 @@ class Linker(object):
 		elif not value and linked:
 			self.cell.links.remove(target)
 
+	def __call__(self, cell):
+		if cell not in self.cell.neighbors:
+			raise ValueError
+		if cell not in self.cell.links:
+			self.cell.links += [cell]
+
 
 class Cell(object):
 	def __init__(self, col, row):

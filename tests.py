@@ -98,6 +98,9 @@ class TestLinker(unittest.TestCase):
 		c.link.north = True
 		self.assertTrue(c.north in c.links, 'North should be in links now')
 		self.assertTrue(c.link.north, 'North should be linked')
+		c.link(c.south)
+		self.assertTrue(c.south in c.links, 'South should be in links now')
+		self.assertTrue(c.link.south, 'South should be linked')
 
 
 def main():
