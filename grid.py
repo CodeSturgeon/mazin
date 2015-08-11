@@ -40,6 +40,7 @@ class CellSortingDict(KeySortingDict):
 		if not isinstance(k, tuple) or not isinstance(k[0], Cell) or \
 				not isinstance(k[1], Cell):
 			raise TypeError
+                # FIXME - return is not acceptable as an argument
 		return tuple(sorted(((k[0].col, k[0].row), (k[1].col, k[1].row))))
 
 
@@ -48,7 +49,7 @@ class Grid(object):
 		self.cols = cols
 		self.rows = rows
 		self.mask = mask or defaultdict(lambda: True)
-		self.distances = CellSortingDict()
+		self.distances = KeySortingDict()
 		self._populate()
 
 	def _populate(self):
