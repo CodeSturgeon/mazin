@@ -114,6 +114,8 @@ if __name__ == '__main__':
         pass
 
     parser = argparse.ArgumentParser(description='Mazin carvers')
+    parser.add_argument('-s', '--seed', default=5,
+            help='Random seed (r for random)')
     parser.add_argument('-r', '--rows', default=5, type=int,
             help='Rows in the grid')
     parser.add_argument('-c', '--cols', default=5, type=int,
@@ -131,7 +133,8 @@ if __name__ == '__main__':
     if args.CARVER not in CARVERS:
         sys.exit('Not a known carver, use -l to list known carvers.')
 
-    random.seed(5)
+    if args.seed != 'r':
+        random.seed(args.seed)
     grid = Grid(args.cols, args.rows)
     locals()[args.CARVER](grid)
     print grid, '\n'
