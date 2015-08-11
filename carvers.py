@@ -2,7 +2,7 @@ import random
 from functools import wraps
 from mazin import Grid
 
-CARVERS = ['btree', 'aldous_broder', 'wilson', 'sidewinder', 'wilsons']
+CARVERS = ['btree', 'aldous_broder', 'sidewinder', 'wilsons']
 
 
 def unroll_steps_zero(f):
@@ -104,31 +104,39 @@ def wilsons(grid, steps=0):
 if __name__ == '__main__':
     from mazin.walkers import dijkstra
     from mazin.text import content_distance
+    import argparse
+    import sys
+
     try:
         import console
         console.clear()
     except ImportError:
         pass
 
+    parser = argparse.ArgumentParser(description='Mazin carvers')
+    parser.add_argument('-r', '--rows', default=5, type=int,
+            help='Rows in the grid')
+    parser.add_argument('-c', '--cols', default=5, type=int,
+            help='Cols in the grid')
+    parser.add_argument('-l', '--list', action='store_true',
+            help='list carvers')
+    parser.add_argument('CARVER', nargs='?', default='btree')
+    args = parser.parse_args()
+
+    if args.list:
+        for c in CARVERS:
+            print '*', c
+        sys.exit()
+
+    if args.CARVER not in CARVERS:
+        sys.exit('Not a known carver, use -l to list known carvers.')
+
     random.seed(5)
-    btree_grid = Grid(5, 5)
-    btree(btree_grid)
-    print btree_grid, '\n'
+    grid = Grid(args.cols, args.rows)
+    locals()[args.CARVER](grid)
+    print grid, '\n'
 
-    sidewinder_grid = Grid(5, 5)
-    sidewinder(sidewinder_grid)
-    print sidewinder_grid, '\n'
-
-    aldous_broder_grid = Grid(5, 5)
-    aldous_broder(aldous_broder_grid)
-    print aldous_broder_grid
-
-    root = sidewinder_grid._cells[(0, 0)]
-    dijkstra(sidewinder_grid, root)
-    content_distance(sidewinder_grid, root)
-
-    print sidewinder_grid
-
-    wilsons_grid = Grid(5, 5)
-    wilsons(wilsons_grid)
-    print wilsons_grid, '\n'
+    root = grid._cells[(0, 0)]
+    dijkstra(grid, root)
+    content_distance(grid, root)
+    print grid
