@@ -1,6 +1,8 @@
 import random
 from functools import wraps
-import mazin
+from mazin import Grid
+
+CARVERS = ['btree', 'aldous_broder', 'wilson', 'sidewinder', 'wilsons']
 
 
 def unroll_steps_zero(f):
@@ -99,36 +101,9 @@ def wilsons(grid, steps=0):
 				unvisited.remove(cell)
 
 
-# FIXME should this really be here?
-@unroll_steps_zero
-def dijkstra(grid, root_cell, steps=0):
-		frontier = [root_cell]
-		grid.distances[root_cell, root_cell] = 0
-		while frontier:
-			new_frontier = []
-			for cell in frontier:
-				if cell == root_cell:
-					d = 0
-				else:
-					d = grid.distances[cell, root_cell]
-				for linked in cell.links:
-					# FIXME this will not work for multi-cell need a seen=set()
-					if (root_cell, linked) not in grid.distances:
-						if iter:
-							yield linked
-						grid.distances[root_cell, linked] = d + 1
-						new_frontier += [linked]
-
-			frontier = new_frontier
-
-
-# FIXME should this really be here?
-def content_distance(grid, root_cell):
-	for cell in grid.iter_cells:
-		cell.content = '%2d ' % grid.distances[root_cell, cell]
-
-
 if __name__ == '__main__':
+	from mazin.walkers import dijkstra
+	from mazin.text import content_distance
 	try:
 		import console
 		console.clear()
@@ -136,15 +111,15 @@ if __name__ == '__main__':
 		pass
 
 	random.seed(5)
-	btree_grid = mazin.Grid(5, 5)
+	btree_grid = Grid(5, 5)
 	btree(btree_grid)
 	print btree_grid, '\n'
 
-	sidewinder_grid = mazin.Grid(5, 5)
+	sidewinder_grid = Grid(5, 5)
 	sidewinder(sidewinder_grid)
 	print sidewinder_grid, '\n'
 
-	aldous_broder_grid = mazin.Grid(5, 5)
+	aldous_broder_grid = Grid(5, 5)
 	aldous_broder(aldous_broder_grid)
 	print aldous_broder_grid
 
@@ -154,7 +129,7 @@ if __name__ == '__main__':
 
 	print sidewinder_grid
 
-	wilsons_grid = mazin.Grid(5, 5)
+	wilsons_grid = Grid(5, 5)
 	wilsons(wilsons_grid)
 	print wilsons_grid, '\n'
 
