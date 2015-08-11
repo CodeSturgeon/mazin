@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 from mazin import Grid
-from mazin.carvers import btree, dijkstra, colorize_distance
+from mazin.carvers import btree, dijkstra
+import random
 
 
 def make_grid_image(grid, cell_size=20, hpad=4, vpad=4):
@@ -49,8 +50,9 @@ def colorize_distance(grid, root_cell):
 
 
 if __name__ == '__main__':
+    random.seed(191)
     grid = Grid(50, 30)
-    btree(grid, seed=191)
+    btree(grid)
     root = grid._cells[(grid.cols / 2, grid.rows / 2)]
     #root = grid._cells[(grid.cols - 1, 0)]
     dijkstra(grid, root)
