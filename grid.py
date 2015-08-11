@@ -66,15 +66,15 @@ class Grid(object):
                 if not self.mask[loc]:
                     continue
                 cell = self._cells[loc]
-                for dcol, drow, dname, dbit in DIRECTIONS:
-                    dloc = (col + dcol, row + drow)
+                for d in DIRECTIONS:
+                    dloc = (col + d.col, row + d.row)
                     try:
                         dcell = self._cells[dloc]
                     except KeyError:
                         continue
                     else:
                         cell.neighbors += [dcell]
-                        setattr(cell, dname, dcell)
+                        setattr(cell, d.name, dcell)
 
     def __getitem__(self, key):
         print key

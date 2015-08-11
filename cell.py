@@ -40,7 +40,7 @@ class Linker(object):
 		self.cell = cell
 
 	def __getattr__(self, name):
-		if name not in [d[2] for d in DIRECTIONS]:
+		if name not in [d.name for d in DIRECTIONS]:
 			raise AttributeError
 		return getattr(self.cell, name) in self.cell.links
 
@@ -48,7 +48,7 @@ class Linker(object):
 		if name == 'cell':
 			self.__dict__[name] = value
 			return
-		if name not in [d[2] for d in DIRECTIONS]:
+		if name not in [d.name for d in DIRECTIONS]:
 			raise AttributeError
 		target = getattr(self.cell, name)
 		if target is None and value:
@@ -89,6 +89,6 @@ class Cell(object):
 	@property
 	def shape(self):
 		ret = 0
-		for dcol, drow, dname, dbit in DIRECTIONS:
-			ret = ret | dbit if getattr(self, dname) else ret
+		for d in DIRECTIONS:
+			ret = ret | d.bit if getattr(self, d.name) else ret
 		return ret
