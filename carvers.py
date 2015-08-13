@@ -35,7 +35,7 @@ def btree(grid, steps=0):
 
 @unroll_steps_zero
 def aldous_broder(grid, steps=0):
-    cell = grid._cells[(
+    cell = grid[(
             random.randint(0, grid.cols - 1),
             random.randint(0, grid.rows - 1)
         )]
@@ -76,7 +76,7 @@ def sidewinder(grid, steps=0):
 
 @unroll_steps_zero
 def wilsons(grid, steps=0):
-    unvisited = grid._cells.values()
+    unvisited = grid.values()
     first = random.choice(unvisited)
     unvisited.remove(first)
 
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     locals()[args.CARVER](grid)
     print grid, '\n'
 
-    root = grid._cells[(0, 0)]
+    root = grid[(0, 0)]
     dijkstra(grid, root)
     content_distance(grid, root)
     print grid

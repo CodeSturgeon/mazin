@@ -7,22 +7,22 @@ from mazin.carvers import unroll_steps_zero
 class GridTest(unittest.TestCase):
 	def test_size(self):
 		grid = Grid(5, 5)
-		self.assertTrue(len(grid._cells) == 5 * 5)
+		self.assertTrue(len(grid) == 5 * 5)
 		self.assertEqual(grid.size, 5 * 5)
 
 	def test_top_left_corner(self):
 		grid = Grid(5, 5)
-		self.assertIsNone(grid._cells[(0, 0)].north)
-		self.assertIsNone(grid._cells[(0, 0)].west)
-		self.assertIsNotNone(grid._cells[(0, 0)].south)
-		self.assertIsNotNone(grid._cells[(0, 0)].east)
+		self.assertIsNone(grid[(0, 0)].north)
+		self.assertIsNone(grid[(0, 0)].west)
+		self.assertIsNotNone(grid[(0, 0)].south)
+		self.assertIsNotNone(grid[(0, 0)].east)
 
 	def test_bottom_right_corner(self):
 		grid = Grid(5, 5)
-		self.assertIsNotNone(grid._cells[(4, 4)].north)
-		self.assertIsNotNone(grid._cells[(4, 4)].west)
-		self.assertIsNone(grid._cells[(4, 4)].south)
-		self.assertIsNone(grid._cells[(4, 4)].east)
+		self.assertIsNotNone(grid[(4, 4)].north)
+		self.assertIsNotNone(grid[(4, 4)].west)
+		self.assertIsNone(grid[(4, 4)].south)
+		self.assertIsNone(grid[(4, 4)].east)
 
 	def test_random_cell(self):
 		grid = Grid(5, 5)
@@ -93,7 +93,7 @@ class TestUnroller(unittest.TestCase):
 class TestLinker(unittest.TestCase):
 	def test_basics(self):
 		grid = Grid(3, 3)
-		c = grid._cells[(1, 1)]
+		c = grid[(1, 1)]
 		self.assertFalse(c.links, 'Starting with no links')
 		self.assertFalse(c.link.north, 'No link north')
 		c.link.north = True

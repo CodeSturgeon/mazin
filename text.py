@@ -12,7 +12,7 @@ def basic_ascii(grid):
         floors = []
         for cn in range(grid.cols):
             if grid.mask[(cn, rn)]:
-                cell = grid._cells[(cn, rn)]
+                cell = grid[(cn, rn)]
             else:
                 cell = Cell(None, cn, rn)
             line += cell.content + (' ' if cell.east in cell.links else '|')
@@ -29,7 +29,7 @@ def basic_ascii(grid):
 def fancy_unicode(grid):
     top = u'\u250c'
     for cn in range(grid.cols):
-        cell = grid._cells[(cn, 0)]
+        cell = grid[(cn, 0)]
         if cell.east in cell.links:
             top += u'\u2500'
         else:
@@ -42,7 +42,7 @@ def fancy_unicode(grid):
     for rn in range(grid.rows - 1):
         row = u''
         for cn in range(grid.cols):
-            cell = grid._cells[(cn, rn)]
+            cell = grid[(cn, rn)]
 
             if cn == 0:
                 if cell.south in cell.links:
@@ -57,7 +57,7 @@ def fancy_unicode(grid):
                     row += u'\u2524'
                 continue
 
-            celld = grid._cells[(cn + 1, rn + 1)]
+            celld = grid[(cn + 1, rn + 1)]
             ab = cell.east in cell.links
             ac = cell.south in cell.links
             bd = cell.east in celld.links
@@ -88,7 +88,7 @@ def fancy_unicode(grid):
 
     bottom = u'\u2514'
     for cn in range(grid.cols):
-        cell = grid._cells[(cn, grid.rows - 1)]
+        cell = grid[(cn, grid.rows - 1)]
         if cell.east in cell.links:
             bottom += u'\u2500'
         else:

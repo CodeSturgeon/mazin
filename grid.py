@@ -76,11 +76,13 @@ class Grid(object):
                         setattr(cell, d.name, dcell)
 
     def __getitem__(self, key):
-        print key
         return self._cells[key]
 
     @property
     def size(self):
+        return len(self._cells)
+
+    def __len__(self):
         return len(self._cells)
 
     @property
