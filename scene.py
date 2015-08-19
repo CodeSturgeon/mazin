@@ -84,5 +84,3 @@ class GridScene(Scene):
 
 scene = GridScene(mazin.carvers.aldous_broder, 10)
 run(scene)
-
-# vim:ts=4:noexpandtab
