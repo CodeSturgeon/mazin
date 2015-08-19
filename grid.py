@@ -108,3 +108,6 @@ class Grid(object):
 
     def __str__(self):
         return basic_ascii(self)
+        
+    def values(self):
+        return self._cells.values()

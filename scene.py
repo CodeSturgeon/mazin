@@ -1,7 +1,7 @@
 from scene import *
 import mazin
 reload(mazin)
-
+reload(mazin)
 
 class GridScene(Scene):
 
@@ -42,7 +42,7 @@ class GridScene(Scene):
 		self.vpad = (self.size.h - (self.rows * self.cell_size))/2
 		self.grid = mazin.Grid(self.cols, self.rows)
 
-		self.itr = self.carver(self.grid, True)
+		self.itr = self.carver(self.grid, steps=1)
 
 		self.delay = 0.00001
 		self.acc = float(self.delay + 1)
@@ -67,7 +67,7 @@ class GridScene(Scene):
 			y1 = (self.size.h - (cell.row * self.cell_size)) - self.vpad
 			x2 = self.hpad + ((cell.col + 1) * self.cell_size)
 			y2 = (self.size.h - ((cell.row + 1) * self.cell_size)) - self.vpad
-			
+
 			if cell is self.next_cell:
 				rect(x1, y2, self.cell_size, self.cell_size)
 
@@ -82,7 +82,7 @@ class GridScene(Scene):
 				line(x1, y2, x2, y2)
 
 
-scene = GridScene(mazin.carvers.Btree(), 10)
+scene = GridScene(mazin.carvers.aldous_broder, 10)
 run(scene)
 
 # vim:ts=4:noexpandtab
