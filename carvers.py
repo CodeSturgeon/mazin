@@ -102,7 +102,7 @@ def wilsons(grid, steps=0):
 
 
 @unroll_steps_zero
-def recursive_backtracker(gird, steps=0):
+def recursive_backtracker(grid, steps=0):
     unvisited = set(grid.values())
     current = random.sample(unvisited, 1)[0]
 
