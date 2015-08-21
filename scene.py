@@ -43,7 +43,7 @@ class GridScene(Scene):
 
         self.itr = self.carver(self.grid, steps=1)
 
-        self.delay = 0.00001
+        self.delay = 0.1
         self.acc = float(self.delay + 1)
 
     def draw(self):
@@ -81,5 +81,5 @@ class GridScene(Scene):
                 line(x1, y2, x2, y2)
 
 
-scene = GridScene(mazin.carvers.aldous_broder, 10)
+scene = GridScene(mazin.carvers.recursive_backtracker, 20)
 run(scene)
