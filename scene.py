@@ -1,7 +1,6 @@
 from scene import *
 import mazin
 reload(mazin)
-reload(mazin)
 
 class GridScene(Scene):
 
