@@ -2,7 +2,7 @@ import random
 from functools import wraps
 from mazin import Grid
 
-CARVERS = ['btree', 'aldous_broder', 'sidewinder', 'wilsons']
+CARVERS = ['btree', 'aldous_broder', 'sidewinder', 'wilsons', 'recursive_backtracker']
 
 
 def unroll_steps_zero(f):
@@ -101,6 +101,30 @@ def wilsons(grid, steps=0):
                 unvisited.remove(cell)
 
 
+@unroll_steps_zero
+def recursive_backtracker(gird, steps=0):
+    unvisited = set(grid.values())
+    current = random.sample(unvisited, 1)[0]
+
+    while unvisited:
+        if steps:
+            yield current
+        unvisited.remove(current)
+        unvisited_neighbors = set(current.neighbors) & unvisited
+        if unvisited_neighbors:
+            next = random.sample(unvisited_neighbors, 1)[0]
+            current.link(next)
+        elif unvisited:
+            for next in grid.iter_rowcells:
+                if next not in unvisited:
+                    continue
+                visited_neighbors = set(next.neighbors) - unvisited
+                if visited_neighbors:
+                    next.link(random.sample(visited_neighbors, 1)[0])
+                    break
+        current = next
+
+
 if __name__ == '__main__':
     from mazin.walkers import dijkstra
     from mazin.text import content_distance
@@ -122,7 +146,7 @@ if __name__ == '__main__':
             help='Cols in the grid')
     parser.add_argument('-l', '--list', action='store_true',
             help='list carvers')
-    parser.add_argument('CARVER', nargs='?', default='btree')
+    parser.add_argument('CARVER', nargs='?', default='recursive_backtracker')
     args = parser.parse_args()
 
     if args.list:
