@@ -2,7 +2,7 @@ import random
 from functools import wraps
 from mazin import Grid
 
-CARVERS = ['btree', 'aldous_broder', 'sidewinder', 'wilsons', 'recursive_backtracker']
+CARVERS = ['btree', 'aldous_broder', 'sidewinder', 'wilsons', 'hunt_and_kill']
 
 
 def unroll_steps_zero(f):
@@ -102,7 +102,7 @@ def wilsons(grid, steps=0):
 
 
 @unroll_steps_zero
-def recursive_backtracker(grid, steps=0):
+def hunt_and_kill(grid, steps=0):
     unvisited = set(grid.values())
     current = random.sample(unvisited, 1)[0]
 
@@ -146,7 +146,7 @@ if __name__ == '__main__':
             help='Cols in the grid')
     parser.add_argument('-l', '--list', action='store_true',
             help='list carvers')
-    parser.add_argument('CARVER', nargs='?', default='recursive_backtracker')
+    parser.add_argument('CARVER', nargs='?', default='hunt_and_kill')
     args = parser.parse_args()
 
     if args.list:

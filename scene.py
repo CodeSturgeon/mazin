@@ -81,5 +81,5 @@ class GridScene(Scene):
                 line(x1, y2, x2, y2)
 
 
-scene = GridScene(mazin.carvers.recursive_backtracker, 20)
+scene = GridScene(mazin.carvers.hunt_and_kill, 20)
 run(scene)
